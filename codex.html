@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Visualization of Pi Being Irrational</title>
+    <style>
+        canvas {
+            border: 1px solid black;
+        }
+    </style>
+</head>
+<body>
+    <canvas id="piCanvas" width="800" height="800"></canvas>
+    <script>
+        const canvas = document.getElementById('piCanvas');
+        const ctx = canvas.getContext('2d');
+
+        const centerX = canvas.width / 2;
+        const centerY = canvas.height / 2;
+        const rodLength = 150;
+        let angle = 0;
+
+        // Array to store the traced path
+        let path = [];
+
+        function draw() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            // Draw the inner rod
+            const innerAngle = angle * Math.PI / 180;
+            const innerX = centerX + rodLength * Math.cos(innerAngle);
+            const innerY = centerY + rodLength * Math.sin(innerAngle);
+
+            ctx.beginPath();
+            ctx.moveTo(centerX, centerY);
+            ctx.lineTo(innerX, innerY);
+            ctx.stroke();
+
+            // Draw the outer rod
+            const outerAngle = Math.PI * innerAngle;
+            const outerX = innerX + rodLength * Math.cos(outerAngle);
+            const outerY = innerY + rodLength * Math.sin(outerAngle);
+
+            ctx.beginPath();
+            ctx.moveTo(innerX, innerY);
+            ctx.lineTo(outerX, outerY);
+            ctx.stroke();
+
+            // Add the current position to the path
+            path.push({ x: outerX, y: outerY });
+
+            // Draw the traced path
+            ctx.beginPath();
+            ctx.moveTo(path[0].x, path[0].y);
+            for (let i = 1; i < path.length; i++) {
+                ctx.lineTo(path[i].x, path[i].y);
+            }
+            ctx.strokeStyle = 'red';
+            ctx.stroke();
+
+            // Draw the current position as a red dot
+            ctx.beginPath();
+            ctx.arc(outerX, outerY, 2, 0, 2 * Math.PI);
+            ctx.fillStyle = 'red';
+            ctx.fill();
+
+            // Increment the angle
+            angle += 36;
+
+            requestAnimationFrame(draw);
+        }
+
+        draw();
+    </script>
+</body>
+</html>
